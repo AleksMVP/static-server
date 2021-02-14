@@ -17,6 +17,10 @@ class ThreadPool {
         }
     }
 
+    ThreadPool(const ThreadPool& rhs) = delete;
+    ThreadPool& operator=(const ThreadPool& rhs) = delete;
+
+
     void push(T&& task) {
         queue.push_and_wait(std::move(task));
     }

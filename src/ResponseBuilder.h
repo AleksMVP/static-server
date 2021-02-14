@@ -9,6 +9,10 @@ class ResponseBuilder {
  public:
     explicit ResponseBuilder(const Request& req);
     Response build() const;
+
+ private:
+    std::string parse_mime(const std::string& s) const;
+ 
  private:
     Request request;
 };

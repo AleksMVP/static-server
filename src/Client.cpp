@@ -27,6 +27,11 @@ void Client::write(const std::string& data) {
     boost::asio::write(*socket, boost::asio::buffer(data), ignored_error);
 }
 
+void Client::write(char* buffer, size_t size) {
+    boost::system::error_code ignored_error;
+    boost::asio::write(*socket, boost::asio::buffer(buffer, size), ignored_error);
+}
+
 Client::~Client() {
     if (socket) {
         socket->close();

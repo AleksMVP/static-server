@@ -15,7 +15,7 @@ struct Response {
         size_t             content_length,
         const std::string& connection,
         const std::string& content_type,
-        std::unique_ptr<std::istream> body
+        const std::string& body
     );
     Response(
         const std::string& protocol,
@@ -29,7 +29,7 @@ struct Response {
     struct Status {
      public:
         Status();
-        explicit Status(unsigned int code);
+        explicit Status(int code);
 
      public:
         std::string status;
@@ -43,5 +43,5 @@ struct Response {
     size_t content_length;
     std::string connection;
     std::string content_type;
-    std::unique_ptr<std::istream> body;
+    std::string body;
 };

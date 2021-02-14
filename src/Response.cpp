@@ -4,7 +4,7 @@
 
 Response::Status::Status() {}
 
-Response::Status::Status(unsigned int code) {
+Response::Status::Status(int code) : code(code) {
     switch (code) {
     case 200:
         status = "OK";
@@ -31,7 +31,7 @@ Response::Response(
         size_t             content_length,
         const std::string& connection,
         const std::string& content_type,
-        std::unique_ptr<std::istream> body
+        const std::string& body
 ) : protocol(protocol),
     status(status),
     date(date),
@@ -39,7 +39,7 @@ Response::Response(
     content_length(content_length),
     connection(connection),
     content_type(content_type),
-    body(std::move(body)) {}
+    body(body) {}
 
 Response::Response(
         const std::string& protocol,
@@ -59,12 +59,8 @@ std::string Response::str() const {
        << "Content-Length: " << content_length << "\r\n"
        << "Connection: "     << connection << "\r\n"
        << "Content-Type: "   << content_type << "\r\n"
-       << "\r\n";
-
-    std::string line;
-    while(getline(*body, line)) {
-        ss << line << "\r\n";
-    }
+       << "\r\n"
+       << body;
 
     return ss.str();
 }

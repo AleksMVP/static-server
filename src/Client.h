@@ -16,6 +16,7 @@ class Client : public IWriteReader {
 
     size_t read(char* buffer, size_t size) override;
     void write(const std::string& data) override;
+    void write(char* buffer, size_t size) override;
 
     ~Client();
 

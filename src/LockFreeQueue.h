@@ -10,6 +10,22 @@ class NotLockFreeQueue {
     explicit NotLockFreeQueue(size_t max_size_) : 
             max_size(max_size_) {}
 
+    NotLockFreeQueue(NotLockFreeQueue&& rhs) : max_size(rhs.max_size) {
+        std::lock_guard<std::mutex> m(rhs.mutex);
+        queue = std::move(rhs.queue);
+    }
+
+    NotLockFreeQueue& operator=(NotLockFreeQueue&& rhs) {
+        std::lock_guard<std::mutex> m(rhs.mutex);
+        max_size = rhs.max_size;
+        queue = std::move(rhs.queue);
+
+        return *this;
+    }
+
+    NotLockFreeQueue(const NotLockFreeQueue& rhs) = delete;
+    NotLockFreeQueue& operator=(const NotLockFreeQueue& rhs) = delete;
+
     bool push(T&& item) {
         std::unique_lock<std::mutex> m(mutex);
         if (queue.size() >= max_size) {

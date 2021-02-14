@@ -1,37 +1,28 @@
 #include "HTTPHandler.h"
 #include "Request.h"
 #include "Response.h"
-
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <memory>
+#include "ResponseBuilder.h"
 
 void HTTPHandler::handle(Client&& cl) {
     char buff[BUFFER_SIZE];
-    std::stringstream request;
+    std::stringstream ss;
+
     while (true) {
         int length = cl.read(buff, BUFFER_SIZE);
-        request << std::string(buff, length);
+        ss << std::string(buff, length);
 
         if (length == EOF) {
             return;
-        } else if (request.str().find(std::string("\r\n\r\n")) != std::string::npos) {
-            Request r(request);
-            std::cout << request.str() << std::endl;
+        } else if (ss.str().find(std::string("\r\n\r\n")) != std::string::npos) {
+            Request request(ss);
+            std::cout << ss.str() << std::endl;
 
-            std::unique_ptr<std::ifstream> ss(std::make_unique<std::ifstream>("../main.cpp"));
+            ResponseBuilder res_builder(request);
 
-            Response resp( 
-                "HTTP/1.1",
-                Response::Status(200),
-                "Sun, 10 Oct 2010 23:26:07 GMT",
-                "Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g",
-                12,
-                "Close",
-                "text/html",
-                std::make_unique<std::ifstream>("../main.cpp")
-            );
+            Response resp = res_builder.build();
+            if (resp.content_length < 1000) {
+                std::cout << resp.str() << std::endl;
+            }
 
             cl.write(resp.str());
             return;
