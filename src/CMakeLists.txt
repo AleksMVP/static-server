@@ -10,5 +10,5 @@ link_directories("/usr/local/lib")
 
 find_package(Boost REQUIRED system)
 
-add_executable(MyProject main.cpp Server.cpp LoggingHandler.cpp HTTPHandler.cpp Request.cpp Response.cpp Client.cpp ResponseBuilder.cpp)
+add_executable(MyProject main.cpp Server.cpp LoggingHandler.cpp HTTPHandler.cpp Request.cpp Client.cpp ResponseBuilder.cpp)
 target_link_libraries (MyProject -lboost_coroutine -lboost_chrono -lboost_thread-mt -lboost_system)

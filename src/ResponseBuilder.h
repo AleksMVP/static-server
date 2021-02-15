@@ -8,7 +8,7 @@
 class ResponseBuilder {
  public:
     explicit ResponseBuilder(const Request& req);
-    Response build() const;
+    Response build();
 
  private:
     std::string parse_mime(const std::string& s) const;

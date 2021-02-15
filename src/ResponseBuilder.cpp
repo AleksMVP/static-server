@@ -30,10 +30,20 @@ std::string ResponseBuilder::parse_mime(const std::string& s) const{
 ResponseBuilder::ResponseBuilder(const Request& request) :
         request(request) {}
 
-Response ResponseBuilder::build() const {
-    std::string filepath = request.path.substr(1, request.path.length());
-    if (request.path.substr(request.path.length() - 1, request.path.length()) == "/") {
-        filepath += "index.html";
+Response ResponseBuilder::build() {
+    int pos = request.path.find("?");
+    if (pos != std::string::npos) {
+        request.path = request.path.substr(0, pos);
+    }
+
+    std::filesystem::path rootpath("/Users/aleks/Desktop/http-test-suite");
+    std::filesystem::path filepath = rootpath;
+    filepath += std::filesystem::path(request.path);
+
+    bool is_replaced = false;
+    if (!filepath.has_filename()) {
+        filepath.replace_filename("index.html");
+        is_replaced = true;
     }
 
     char time[1000];
@@ -41,33 +51,41 @@ Response ResponseBuilder::build() const {
     struct tm tm = *gmtime(&now);
     strftime(time, sizeof time, "%a, %d %b %Y %H:%M:%S %Z", &tm);
 
-    std::ifstream f(filepath);
-    Response resp(
-        "HTTP/1.1",
-        time,
-        "Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g",
-        "Close"
-    );
+    Response resp;
+    resp.protocol = "HTTP/1.1";
+    resp.date = time;
+    resp.server = "Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g";
+    resp.connection = "Close";
+    resp.content_length = 0;
+    resp.body = nullptr;
 
-    if (f.fail()) {
-        resp.status = Response::Status(404);
-        return resp;
-    }
     if (request.method != "HEAD" && request.method != "GET") {
         resp.status = Response::Status(405);
         return resp;
-    }
-
-    resp.status = Response::Status(200);
-
-    resp.content_type = parse_mime(std::filesystem::path(filepath).extension());
-    if (resp.content_type == "none") {
+    } else if (request.path.find("../") != std::string::npos) {
         resp.status = Response::Status(403);
         return resp;
     }
-    resp.body = std::string((std::istreambuf_iterator<char>(f)),
-                                std::istreambuf_iterator<char>());
-    resp.content_length = resp.body.length();
+    {   
+        std::cout << filepath << std::endl;
+        std::ifstream file(filepath, std::ios::binary | std::ios::ate);
+        if (file.fail() && is_replaced) {
+            resp.status = Response::Status(403);
+            return resp;
+        } else if (file.fail()) {
+            resp.status = Response::Status(404);
+            return resp;
+        }
+        resp.content_length = file.tellg();
+    }
+
+    resp.status = Response::Status(200);
+    resp.content_type = parse_mime(filepath.extension());
+
+    if (request.method == "GET") {
+        resp.body = std::make_shared<std::ifstream>(std::ifstream(filepath));
+        return resp;
+    }
 
     return resp;
 }
