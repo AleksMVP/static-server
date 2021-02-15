@@ -1,8 +1,10 @@
 #include "Server.h"
 #include <iostream>
 
-Server::Server(IHandler& handler_) : 
-    handler(handler_), is_working(true), thread_pool(2, 2) {}
+Server::Server(IHandler& handler_, const Config& config) : 
+    handler(handler_), 
+    is_working(true), 
+    thread_pool(config.threads_number, config.queue_size) {}
 
 void Server::start() {
     boost::asio::io_context io_context;
@@ -23,4 +25,9 @@ void Server::start() {
 
 void Server::stop() {
     is_working = false;
+}
+
+Server::Config::Config(int threads_number, int queue_size) :
+        threads_number(threads_number), queue_size(queue_size) {
+
 }

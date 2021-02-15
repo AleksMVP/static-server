@@ -1,7 +1,9 @@
 #include "HTTPHandler.h"
 #include "Request.h"
 #include "Response.h"
-#include "ResponseBuilder.h" 
+
+HTTPHandler::HTTPHandler(const std::string& resolve_path) : 
+        resolve_path(resolve_path) {}
 
 void HTTPHandler::handle(Client&& cl) {
     char buff[BUFFER_SIZE];
@@ -17,12 +19,11 @@ void HTTPHandler::handle(Client&& cl) {
             std::cout << ss.str() << std::endl;
 
             Request request(ss);
-            ResponseBuilder res_builder(request);
-            Response resp = res_builder.build();
+            Response resp(request, resolve_path);
 
             cl << resp;
 
-            if (resp.content_length < 1000) {
+            if (resp.get_content_length() < 1000) {
                 std::cout << resp << std::endl;
             }
 
