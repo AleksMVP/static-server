@@ -8,9 +8,10 @@
 class Server {
  public:
     struct Config {
-        Config(int threads_number, int queue_size);
+        Config(int threads_number, int queue_size, int port);
         int queue_size;
         int threads_number;
+        int port;
     };
  public:
     explicit Server(IHandler& handler_, const Config& config);
@@ -18,6 +19,7 @@ class Server {
     void stop();
 
  private:
+    int port;
     std::atomic<bool> is_working;
 
     IHandler& handler;
