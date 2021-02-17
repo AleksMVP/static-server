@@ -2,7 +2,7 @@
 #include "Request.h"
 #include "Response.h"
 
-HTTPHandler::HTTPHandler(const std::string& resolve_path) : 
+HTTPHandler::HTTPHandler(const std::filesystem::path& resolve_path) : 
         resolve_path(resolve_path) {}
 
 void HTTPHandler::handle(Client&& cl) {

@@ -11,7 +11,7 @@
 
 class Response {
  public:
-    explicit Response(const Request& request, const std::string& resolve_path);
+    explicit Response(const Request& request, std::filesystem::path resolve_path);
 
     size_t get_content_length() const;
 
@@ -19,7 +19,7 @@ class Response {
     friend T& operator<<(T& stream, const Response& resp);
 
  private:
-    void set_date();
+    std::string get_date() const;
     std::string parse_mime(const std::string& s) const;
     void decode_url(std::string::iterator dst, const char *src) const;
     std::string prepare_url(std::string url) const;

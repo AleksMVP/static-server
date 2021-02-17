@@ -3,13 +3,15 @@
 #include "IHandler.h"
 #include "Client.h"
 
+#include <filesystem>
+
 #define BUFFER_SIZE 1024
 
 class HTTPHandler : public IHandler {
  public: 
-    HTTPHandler(const std::string& resolve_path);
+    HTTPHandler(const std::filesystem::path& resolve_path);
     void handle(Client&& data) override;
 
  private:
-    std::string resolve_path;
+    std::filesystem::path resolve_path;
 };

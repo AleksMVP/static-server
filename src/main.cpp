@@ -3,7 +3,9 @@
 #include "HTTPHandler.h"
 #include "Server.h"
 
-const std::string RESOLVE_PATH = "../tests";
+#include <filesystem>
+
+const std::filesystem::path RESOLVE_PATH = "../tests";
 const int QUEUE_SIZE = 10;
 const int THREADS_NUMBER = 2;
 const int PORT = 7888;

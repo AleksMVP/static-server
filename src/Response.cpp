@@ -1,21 +1,22 @@
 #include "Response.h"
 
-Response::Response(const Request& request, const std::string& resolve_path) :
+Response::Response(const Request& request, std::filesystem::path resolve_path) :
             protocol("HTTP/1.1"),
             server("Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g"),
             connection("Close"),
             content_length(0),
-            body(nullptr) {
+            body(nullptr),
+            date(get_date()) {
 
-    set_date();
-    std::filesystem::path filepath(resolve_path);
-    filepath += std::filesystem::path(prepare_url(request.path));
-    
-    std::string tmp = prepare_url(request.path);
-    tmp.pop_back();
+    resolve_path += std::filesystem::path(prepare_url(request.path));
+    std::filesystem::path filepath = resolve_path;
 
-    if (std::filesystem::path(tmp).extension() != "" && filepath.extension() == "") {
+    if (!std::filesystem::exists(filepath)) {
         status = Response::Status(404);
+        return;
+    }
+    if (request.path.find("../") != std::string::npos) {
+        status = Response::Status(403);
         return;
     }
 
@@ -23,24 +24,18 @@ Response::Response(const Request& request, const std::string& resolve_path) :
     if (!filepath.has_filename()) {
         filepath.replace_filename("index.html");
         is_replaced = true;
+    } 
+    if (!std::filesystem::exists(filepath)) {
+        status = Response::Status(403);
+        return;
     }
 
     if (request.method != "HEAD" && request.method != "GET") {
         status = Response::Status(405);
         return;
-    } else if (request.path.find("../") != std::string::npos) {
-        status = Response::Status(403);
-        return;
     }
     {   
         std::ifstream file(filepath, std::ios::binary | std::ios::ate);
-        if (file.fail() && is_replaced) {
-            status = Response::Status(403);
-            return;
-        } else if (file.fail()) {
-            status = Response::Status(404);
-            return;
-        }
         content_length = file.tellg();
     }
 
@@ -125,13 +120,13 @@ void Response::decode_url(std::string::iterator dst, const char *src) const {
     *dst++ = '\0';
 }
 
-void Response::set_date() {
+std::string Response::get_date() const {
     char time[1000];
     time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
     struct tm tm = *gmtime(&now);
     strftime(time, sizeof time, "%a, %d %b %Y %H:%M:%S %Z", &tm);
 
-    date = time;
+    return std::string(time);
 }
 
 std::string Response::prepare_url(std::string url) const  {
