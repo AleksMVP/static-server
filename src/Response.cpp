@@ -3,7 +3,7 @@
 Response::Response(const Request& request, std::filesystem::path resolve_path) :
             protocol("HTTP/1.1"),
             server("Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g"),
-            connection("Close"),
+            connection("close"),
             content_length(0),
             body(nullptr),
             date(get_date()) {
@@ -11,19 +11,17 @@ Response::Response(const Request& request, std::filesystem::path resolve_path) :
     resolve_path += std::filesystem::path(prepare_url(request.path));
     std::filesystem::path filepath = resolve_path;
 
-    if (!std::filesystem::exists(filepath)) {
-        status = Response::Status(404);
-        return;
-    }
     if (request.path.find("../") != std::string::npos) {
         status = Response::Status(403);
         return;
     }
+    if (!std::filesystem::exists(filepath)) {
+        status = Response::Status(404);
+        return;
+    }
 
-    bool is_replaced = false;
     if (!filepath.has_filename()) {
         filepath.replace_filename("index.html");
-        is_replaced = true;
     } 
     if (!std::filesystem::exists(filepath)) {
         status = Response::Status(403);
