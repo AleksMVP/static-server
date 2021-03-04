@@ -72,17 +72,17 @@ T& operator<<(T& stream, const Response& resp) {
     }*/
 
     if (resp.body) {
-        size_t butes_count = BUFFER_SIZE * sizeof(Byte); 
+        size_t bytes_count = BUFFER_SIZE * sizeof(Byte); 
 
-        for (int i = 0; i < resp.content_length / butes_count; i++) {
-            resp.body->read(static_cast<char*>(buff), butes_count);
-            stream.write(static_cast<char*>(buff), butes_count);
-            // stream << std::string(static_cast<char*>(buffer), butes_count);
+        for (int i = 0; i < resp.content_length / bytes_count; i++) {
+            resp.body->read(static_cast<char*>(buff), bytes_count);
+            stream.write(static_cast<char*>(buff), bytes_count);
+            // stream << std::string(static_cast<char*>(buffer), bytes_count);
         }
-        if (resp.content_length % butes_count) {
-            resp.body->read(static_cast<char*>(buff), resp.content_length % butes_count);
-            stream.write(static_cast<char*>(buff), resp.content_length % butes_count);
-            // stream << std::string(static_cast<char*>(buffer), resp.content_length % butes_count);
+        if (resp.content_length % bytes_count) {
+            resp.body->read(static_cast<char*>(buff), resp.content_length % bytes_count);
+            stream.write(static_cast<char*>(buff), resp.content_length % bytes_count);
+            // stream << std::string(static_cast<char*>(buffer), resp.content_length % bytes_count);
         }
         resp.body->clear();
         resp.body->seekg(0, std::ios::beg);
