@@ -1,5 +1,7 @@
 #include "Response.h"
 
+#include "Utils.h"
+
 Response::Response(const Request& request, std::filesystem::path resolve_path) :
             protocol("HTTP/1.1"),
             server("Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g"),
@@ -116,15 +118,6 @@ void Response::decode_url(std::string::iterator dst, const char *src) const {
         }
     }
     *dst++ = '\0';
-}
-
-std::string Response::get_date() const {
-    char time[1000];
-    time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    struct tm tm = *gmtime(&now);
-    strftime(time, sizeof time, "%a, %d %b %Y %H:%M:%S %Z", &tm);
-
-    return std::string(time);
 }
 
 std::string Response::prepare_url(std::string url) const  {
