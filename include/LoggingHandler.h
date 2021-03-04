@@ -5,11 +5,11 @@
 
 #include <iostream>
 
-class LoggingHandler : public IHandler {
+class LoggingHandler : public IHandler<Client> {
  public:
-    explicit LoggingHandler(IHandler& next_handler_);
+    explicit LoggingHandler(IHandler<Client>& next_handler_);
     void handle(Client&& cl) override;
 
  private:
-    IHandler& next_handler;
+    IHandler<Client>& next_handler;
 };

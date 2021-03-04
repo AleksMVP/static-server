@@ -22,9 +22,27 @@ size_t Client::read(char* buffer, size_t size) {
     return length;
 }
 
+std::string Client::read_until(const std::string& pattern) {
+    boost::asio::streambuf response;
+    boost::asio::read_until(*socket, response, pattern);
+    std::istream tmp(&response);
+    std::string str;
+    std::string result;
+    while(getline(tmp, str)) {
+        result += str + "\n";
+    }
+
+    return result;
+}
+
 void Client::write(const std::string& data) {
     boost::system::error_code ignored_error;
     boost::asio::write(*socket, boost::asio::buffer(data), ignored_error);
+}
+
+void Client::write(char* buffer, size_t size) {
+    boost::system::error_code ignored_error;
+    boost::asio::write(*socket, boost::asio::buffer(buffer, size), ignored_error);
 }
 
 Client& Client::operator<<(const std::string& data) {

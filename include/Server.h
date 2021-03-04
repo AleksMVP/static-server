@@ -2,6 +2,7 @@
 
 #include "IHandler.h"
 #include "ThreadPool.h"
+#include "Client.h"
 
 #include <boost/asio.hpp>
 
@@ -14,7 +15,7 @@ class Server {
         int port;
     };
  public:
-    explicit Server(IHandler& handler_, const Config& config);
+    explicit Server(IHandler<Client>& handler_, const Config& config);
     void start();
     void stop();
 
@@ -22,6 +23,6 @@ class Server {
     int port;
     std::atomic<bool> is_working;
 
-    IHandler& handler;
+    IHandler<Client>& handler;
     ThreadPool<std::packaged_task<void(void)>> thread_pool;
 };

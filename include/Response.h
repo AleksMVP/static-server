@@ -9,6 +9,11 @@
 #include <filesystem>
 #include <fstream>
 
+#define BUFFER_SIZE (102400)
+
+using Byte = char;
+static Byte buff[BUFFER_SIZE];
+
 class Response {
  public:
     explicit Response(const Request& request, std::filesystem::path resolve_path);
@@ -56,10 +61,28 @@ T& operator<<(T& stream, const Response& resp) {
 
     stream << ss.str();
 
-    if (resp.body) {
+    /*if (resp.body) {
         std::string tmp;
+
         while(getline(*resp.body, tmp)) {
             stream << tmp << "\n";
+        }
+        resp.body->clear();
+        resp.body->seekg(0, std::ios::beg);
+    }*/
+
+    if (resp.body) {
+        size_t butes_count = BUFFER_SIZE * sizeof(Byte); 
+
+        for (int i = 0; i < resp.content_length / butes_count; i++) {
+            resp.body->read(static_cast<char*>(buff), butes_count);
+            stream.write(static_cast<char*>(buff), butes_count);
+            // stream << std::string(static_cast<char*>(buffer), butes_count);
+        }
+        if (resp.content_length % butes_count) {
+            resp.body->read(static_cast<char*>(buff), resp.content_length % butes_count);
+            stream.write(static_cast<char*>(buff), resp.content_length % butes_count);
+            // stream << std::string(static_cast<char*>(buffer), resp.content_length % butes_count);
         }
         resp.body->clear();
         resp.body->seekg(0, std::ios::beg);

@@ -1,13 +1,14 @@
 #include "Server.h"
 #include <iostream>
 
-Server::Server(IHandler& handler_, const Config& config) : 
+Server::Server(IHandler<Client>& handler_, const Config& config) : 
     handler(handler_), 
     is_working(true), 
     thread_pool(config.threads_number, config.queue_size),
     port(config.port) {}
 
 void Server::start() {
+    is_working = true;
     boost::asio::io_context io_context;
     boost::asio::ip::tcp::acceptor acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port));
     while(is_working) {

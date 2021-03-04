@@ -1,7 +1,7 @@
 #include "LoggingHandler.h"
 #include "TimeLogger.h"
 
-LoggingHandler::LoggingHandler(IHandler& next_handler_) : 
+LoggingHandler::LoggingHandler(IHandler<Client>& next_handler_) : 
         next_handler(next_handler_) {}
 
 void LoggingHandler::handle(Client&& cl) {

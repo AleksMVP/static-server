@@ -7,7 +7,7 @@
 
 #define BUFFER_SIZE 1024
 
-class HTTPHandler : public IHandler {
+class HTTPHandler : public IHandler<Client> {
  public: 
     HTTPHandler(const std::filesystem::path& resolve_path);
     void handle(Client&& data) override;

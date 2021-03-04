@@ -13,7 +13,9 @@ class Client {
     Client& operator=(const Client& rhs) = delete;
 
     size_t read(char* buffer, size_t size);
+    std::string read_until(const std::string& pattern);
     void write(const std::string& data);
+    void write(char* buffer, size_t size);
 
     Client& operator<<(const std::string& data);
 
