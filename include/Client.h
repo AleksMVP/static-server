@@ -3,9 +3,11 @@
 #include <memory>
 #include <boost/asio.hpp>
 
+using tcp = boost::asio::ip::tcp;
+
 class Client {
  public:
-    explicit Client(std::unique_ptr<boost::asio::ip::tcp::socket> socket);
+    explicit Client(std::unique_ptr<tcp::socket> socket);
     Client(const Client& c) = delete;
     Client(Client&& c);
 
@@ -14,6 +16,7 @@ class Client {
 
     size_t read(char* buffer, size_t size);
     std::string read_until(const std::string& pattern);
+
     void write(const std::string& data);
     void write(char* buffer, size_t size);
 
@@ -22,5 +25,5 @@ class Client {
     ~Client();
 
  private:
-    std::unique_ptr<boost::asio::ip::tcp::socket> socket;
+    std::unique_ptr<tcp::socket> socket;
 };

@@ -26,7 +26,7 @@ class Response {
  private:
     std::string get_date() const;
     std::string parse_mime(const std::string& s) const;
-    void decode_url(std::string::iterator dst, const char *src) const;
+    void decode_url(std::string::iterator dst, const char* src) const;
     std::string prepare_url(std::string url) const;
 
     struct Status {

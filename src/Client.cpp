@@ -1,6 +1,8 @@
 #include "Client.h"
 
-Client::Client(std::unique_ptr<boost::asio::ip::tcp::socket> socket) : 
+using tcp = boost::asio::ip::tcp;
+
+Client::Client(std::unique_ptr<tcp::socket> socket) : 
     socket(std::move(socket)) {}
 
 Client::Client(Client&& c) {

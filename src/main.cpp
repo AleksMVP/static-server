@@ -2,6 +2,7 @@
 #include "LoggingHandler.h"
 #include "HTTPHandler.h"
 #include "Server.h"
+#include "Client.h"
 
 #include <filesystem>
 
@@ -11,14 +12,15 @@ const int THREADS_NUMBER = 2;
 const int PORT = 7888;
 
 int main() {
-    HTTPHandler http_handler(RESOLVE_PATH);
-    LoggingHandler logging_handler(http_handler);
-    Server::Config config(
+    HTTPHandler<Client> http_handler(RESOLVE_PATH);
+    LoggingHandler<Client> logging_handler(http_handler);
+
+    Server<Client>::Config config(
         THREADS_NUMBER, 
         QUEUE_SIZE,
         PORT
     );
 
-    Server server(logging_handler, config);
+    Server<Client> server(logging_handler, config);
     server.start();
 }
