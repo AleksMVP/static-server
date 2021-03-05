@@ -11,7 +11,7 @@ template <typename T=std::packaged_task<void(void)>>
 class ThreadPool {
  public:
     ThreadPool(size_t threads_number, size_t queue_size) : 
-            is_working(true), queue(queue_size) {
+             queue(queue_size), is_working(true) {
         for (size_t i = 0; i < threads_number; i++) {
             threads.push_back(std::thread(std::bind(&ThreadPool::execute, this)));
         }

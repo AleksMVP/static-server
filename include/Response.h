@@ -12,7 +12,6 @@
 #define BUFFER_SIZE (102400)
 
 using Byte = char;
-static Byte buff[BUFFER_SIZE];
 
 class Response {
  public:
@@ -38,14 +37,16 @@ class Response {
     };
 
     std::string protocol;
+    std::string server;
+    std::string connection;
+    size_t content_length;
     Status status;
     std::string date;
-    std::string server;
-    size_t content_length;
-    std::string connection;
     std::string content_type;
     std::shared_ptr<std::istream> body;
 };
+
+static Byte buff[BUFFER_SIZE];
 
 template <typename T>
 T& operator<<(T& stream, const Response& resp) {
@@ -60,29 +61,18 @@ T& operator<<(T& stream, const Response& resp) {
 
     stream << ss.str();
 
-    /*if (resp.body) {
-        std::string tmp;
-
-        while(getline(*resp.body, tmp)) {
-            stream << tmp << "\n";
-        }
-        resp.body->clear();
-        resp.body->seekg(0, std::ios::beg);
-    }*/
-
     if (resp.body) {
         size_t bytes_count = BUFFER_SIZE * sizeof(Byte); 
 
-        for (int i = 0; i < resp.content_length / bytes_count; i++) {
+        for (unsigned long i = 0; i < resp.content_length / bytes_count; i++) {
             resp.body->read(static_cast<char*>(buff), bytes_count);
             stream.write(static_cast<char*>(buff), bytes_count);
-            // stream << std::string(static_cast<char*>(buffer), bytes_count);
         }
         if (resp.content_length % bytes_count) {
             resp.body->read(static_cast<char*>(buff), resp.content_length % bytes_count);
             stream.write(static_cast<char*>(buff), resp.content_length % bytes_count);
-            // stream << std::string(static_cast<char*>(buffer), resp.content_length % bytes_count);
         }
+
         resp.body->clear();
         resp.body->seekg(0, std::ios::beg);
     }

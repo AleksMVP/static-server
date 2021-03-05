@@ -7,8 +7,8 @@ Response::Response(const Request& request, std::filesystem::path resolve_path) :
             server("Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g"),
             connection("close"),
             content_length(0),
-            body(nullptr),
-            date(get_date()) {
+            date(get_date()),
+            body(nullptr) {
 
     resolve_path += std::filesystem::path(prepare_url(request.path));
     std::filesystem::path filepath = resolve_path;
@@ -121,7 +121,7 @@ void Response::decode_url(std::string::iterator dst, const char *src) const {
 }
 
 std::string Response::prepare_url(std::string url) const  {
-    int pos = url.find("?");
+    const unsigned long pos = url.find("?");
     if (pos != std::string::npos) {
         url = url.substr(0, pos);
     }
