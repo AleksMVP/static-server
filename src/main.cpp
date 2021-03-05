@@ -12,15 +12,15 @@ const int THREADS_NUMBER = 2;
 const int PORT = 7888;
 
 int main() {
-    HTTPHandler<Client> http_handler(RESOLVE_PATH);
-    LoggingHandler<Client> logging_handler(http_handler);
-
     Server<Client>::Config config(
         THREADS_NUMBER, 
         QUEUE_SIZE,
         PORT
     );
 
+    HTTPHandler<Client> http_handler(RESOLVE_PATH);
+    LoggingHandler<Client> logging_handler(http_handler);
     Server<Client> server(logging_handler, config);
+
     server.start();
 }
