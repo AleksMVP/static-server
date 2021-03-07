@@ -4,8 +4,6 @@
 #include "ThreadPool.h"
 #include "Acceptor.h"
 
-#include <boost/asio.hpp>
-
 template <typename T>
 class Server {
  public:
@@ -15,6 +13,7 @@ class Server {
         int queue_size;
         int port;
     };
+
  public:
     explicit Server(IHandler<T>& handler_, const Config& config);
     void start();

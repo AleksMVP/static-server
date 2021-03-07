@@ -51,13 +51,13 @@ static Byte buff[BUFFER_SIZE];
 template <typename T>
 T& operator<<(T& stream, const Response& resp) {
     std::stringstream ss;
-    ss << resp.protocol << " " << resp.status.code << " " << resp.status.status << "\r\n"
-    << "Date: "           << resp.date << "\r\n"
-    << "Server: "         << resp.server << "\r\n"
-    << "Content-Length: " << resp.content_length << "\r\n"
-    << "Connection: "     << resp.connection << "\r\n"
-    << "Content-Type: "   << resp.content_type << "\r\n"
-    << "\r\n";
+    ss  << resp.protocol << " " << resp.status.code    << " " << resp.status.status << "\r\n"
+        << "Date: "             << resp.date           << "\r\n"
+        << "Server: "           << resp.server         << "\r\n"
+        << "Content-Length: "   << resp.content_length << "\r\n"
+        << "Connection: "       << resp.connection     << "\r\n"
+        << "Content-Type: "     << resp.content_type   << "\r\n"
+        << "\r\n";
 
     stream << ss.str();
 
