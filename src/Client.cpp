@@ -9,7 +9,8 @@ Client::Client(Client&& c) {
 }
 
 Client& Client::operator=(Client&& rhs) {
-    socket = std::move(rhs.socket);
+    socket = rhs.socket;
+    rhs.socket = 0;
     return *this;
 }
 
