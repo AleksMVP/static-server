@@ -39,7 +39,7 @@ template <typename T>
 void Server<T>::start() {
     is_working = true;
     while(is_working) {
-        T cl(acceptor.accept());
+        T cl(acceptor.accept_());
         std::packaged_task<void(void)> task(
             [this, client = std::move(cl)] () mutable {
                 handler.handle(std::move(client));

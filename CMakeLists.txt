@@ -10,7 +10,5 @@ include_directories("include")
 link_directories("/usr/lib")
 link_directories("/usr/local/lib")
 
-find_package(Boost REQUIRED system)
-
 add_executable(MyProject src/main.cpp src/Response.cpp src/Request.cpp src/Client.cpp src/Utils.cpp)
-target_link_libraries (MyProject -lboost_coroutine -lboost_chrono -lboost_thread-mt -lboost_system)
+target_link_libraries (MyProject)

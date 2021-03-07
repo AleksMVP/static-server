@@ -1,12 +1,11 @@
 #include "Client.h"
 
-using tcp = boost::asio::ip::tcp;
-
-Client::Client(std::unique_ptr<tcp::socket> socket) : 
-    socket(std::move(socket)) {}
+Client::Client(int socket) : 
+    socket(socket) {}
 
 Client::Client(Client&& c) {
-    socket = std::move(c.socket);
+    socket = c.socket;
+    c.socket = 0;
 }
 
 Client& Client::operator=(Client&& rhs) {
@@ -14,35 +13,17 @@ Client& Client::operator=(Client&& rhs) {
     return *this;
 }
 
-size_t Client::read(char* buffer, size_t size) {
-    boost::system::error_code error;
-    int length = socket->read_some(boost::asio::buffer(buffer, size), error);
-    if (error == boost::asio::error::eof) {
-        return EOF;
-    }
-
-    return length;
-}
-
-void Client::write(const std::string& data) {
-    boost::system::error_code ignored_error;
-    boost::asio::write(*socket, boost::asio::buffer(data), ignored_error);
-}
-
 void Client::write(char* buffer, size_t size) {
-    boost::system::error_code ignored_error;
-    boost::asio::write(*socket, boost::asio::buffer(buffer, size), ignored_error);
+    send(socket, buffer, size, 0); 
 }
 
 Client& Client::operator<<(const std::string& data) {
-    boost::system::error_code ignored_error;
-    boost::asio::write(*socket, boost::asio::buffer(data), ignored_error);
-
+    send(socket , data.c_str(), data.length(), 0); 
     return *this;
 }
 
 Client::~Client() {
     if (socket) {
-        socket->close();
+        close(socket);
     }
 }

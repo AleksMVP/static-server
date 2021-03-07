@@ -25,13 +25,7 @@ template <typename T>
 void HTTPHandler<T>::handle(T&& client) {
     auto result = client.read_until("\r\n\r\n");
 
-    if (!result) {
-        return;
-    }
-
-    std::istream is(result.get());
-
-    Request request(is);
+    Request request(*result);
     Response resp(request, resolve_path);
 
     client << resp;
