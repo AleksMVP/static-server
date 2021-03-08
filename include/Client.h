@@ -34,7 +34,7 @@ class Client {
     int socket;
 };
 
-static char buffer[READ_BUFFER_SIZE];
+static thread_local char buffer[READ_BUFFER_SIZE];
 
 template <typename T>
 std::unique_ptr<T> Client::read_until(const std::string& pattern) {

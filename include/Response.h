@@ -46,7 +46,7 @@ class Response {
     std::shared_ptr<std::istream> body;
 };
 
-static Byte buff[BUFFER_SIZE];
+static thread_local Byte buff[BUFFER_SIZE];
 
 template <typename T>
 T& operator<<(T& stream, const Response& resp) {
