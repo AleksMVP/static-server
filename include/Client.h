@@ -2,12 +2,7 @@
 
 #include <memory>
 #include <unistd.h> 
-#include <stdio.h> 
 #include <sys/socket.h> 
-#include <stdlib.h> 
-#include <netinet/in.h> 
-#include <string.h>
-#include <iostream>
 #include <sstream>
 
 #define READ_BUFFER_SIZE 1024
