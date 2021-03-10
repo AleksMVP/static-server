@@ -41,10 +41,13 @@ std::unique_ptr<T> Client::read_until(const std::string& pattern) {
     std::unique_ptr<T> ss(std::make_unique<T>());
 
     while (true) {
-        int valread = read(socket , buffer, READ_BUFFER_SIZE); 
-        *ss << std::string(buffer, valread);
-        if (ss->str().find(pattern) != std::string::npos || valread == 0) {
+        int read_count = read(socket , buffer, READ_BUFFER_SIZE); 
+        *ss << std::string(buffer, read_count);
+        if (ss->str().find(pattern) != std::string::npos || read_count == 0) {
             break;
+        }
+        if (read_count == EOF) {
+            return nullptr;
         }
     }
 

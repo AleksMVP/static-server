@@ -2,6 +2,7 @@
 
 #include "IHandler.h"
 #include "ThreadPool.h"
+#include "IAcceptor.h"
 #include "Acceptor.h"
 
 template <typename T>
@@ -15,23 +16,34 @@ class Server {
     };
 
  public:
-    explicit Server(IHandler<T>& handler_, const Config& config);
+    explicit Server(
+        IHandler<T>& handler_, 
+        IAcceptor<T>& acceptor,
+        const Config& config, 
+        std::ostream& stream
+    );
     void start();
     void stop();
 
  private:
     std::atomic<bool> is_working;
+    std::ostream& stream;
 
-    Acceptor<T> acceptor;
+    IAcceptor<T>& acceptor;
     IHandler<T>& handler;
     ThreadPool<std::packaged_task<void(void)>> thread_pool;
 };
 
 
 template <typename T>
-Server<T>::Server(IHandler<T>& handler_, const Server<T>::Config& config) : 
+Server<T>::Server(
+        IHandler<T>& handler_, 
+        IAcceptor<T>& acceptor,
+        const Server<T>::Config& config, 
+        std::ostream& stream) : 
     is_working(true),
-    acceptor(config.port),
+    stream(stream),
+    acceptor(acceptor),
     handler(handler_),  
     thread_pool(config.threads_number, config.queue_size) {}
 
@@ -39,13 +51,17 @@ template <typename T>
 void Server<T>::start() {
     is_working = true;
     while(is_working) {
-        T cl(acceptor.accept_());
-        std::packaged_task<void(void)> task(
-            [this, client = std::move(cl)] () mutable {
-                handler.handle(std::move(client));
-            }
-        );
-        thread_pool.push(std::move(task));
+        try {
+            T cl(acceptor.accept());
+            std::packaged_task<void(void)> task(
+                [this, client = std::move(cl)] () mutable {
+                    handler.handle(std::move(client));
+                }
+            );
+            thread_pool.push(std::move(task));
+        } catch (AcceptException& ex) {
+            stream << ex.what() << std::endl;
+        }
     }
 }
 

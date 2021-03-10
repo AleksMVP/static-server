@@ -1,7 +1,11 @@
 #pragma once
 
+#include "Utils.h"
+
 #include <chrono>
 #include <ostream>
+
+namespace ch = std::chrono;
 
 template <typename T>
 class TimeLogger {
@@ -11,10 +15,10 @@ class TimeLogger {
     }
 
     ~TimeLogger() {
+
         auto end = std::chrono::system_clock::now();
-        stream << "Elapsed time: " 
-               << std::chrono::duration_cast<T>(end - start).count() 
-               << std::endl;
+        stream << "Date: " << get_date() << std::endl
+               << "Elapsed time: " << ch::duration_cast<T>(end - start).count() << std::endl;
     }
  private:
     std::chrono::system_clock::time_point start;

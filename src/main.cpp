@@ -1,5 +1,6 @@
 #include "IHandler.h"
 #include "LoggingHandler.h"
+#include "ExceptionHandler.h"
 #include "HTTPHandler.h"
 #include "Server.h"
 #include "Client.h"
@@ -18,9 +19,13 @@ int main() {
         PORT
     );
 
+    Acceptor<Client> acceptor(PORT);
+
     HTTPHandler<Client> http_handler(RESOLVE_PATH);
-    LoggingHandler<Client> logging_handler(http_handler);
-    Server<Client> server(logging_handler, config);
+    ExceptionHandler<Client> exception_handler(http_handler, std::cerr);
+    LoggingHandler<Client> logging_handler(exception_handler, std::cerr);
+
+    Server<Client> server(logging_handler, acceptor, config, std::cerr);
 
     server.start();
 }
