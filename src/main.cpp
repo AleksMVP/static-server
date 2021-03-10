@@ -21,7 +21,7 @@ int main() {
 
     Acceptor<Client> acceptor(PORT);
 
-    HTTPHandler<Client> http_handler(RESOLVE_PATH);
+    HTTPHandler<Client> http_handler(RESOLVE_PATH, std::cerr);
     ExceptionHandler<Client> exception_handler(http_handler, std::cerr);
     LoggingHandler<Client> logging_handler(exception_handler, std::cerr);
 
