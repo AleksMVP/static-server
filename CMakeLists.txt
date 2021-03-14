@@ -11,4 +11,5 @@ link_directories("/usr/lib")
 link_directories("/usr/local/lib")
 
 add_executable(MyProject src/main.cpp src/Response.cpp src/Request.cpp src/Client.cpp src/Utils.cpp)
-target_link_libraries (MyProject -pthread)
+
+target_link_libraries (MyProject -lpthread)
