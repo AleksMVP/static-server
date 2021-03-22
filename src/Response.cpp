@@ -2,7 +2,9 @@
 
 #include "Utils.h"
 
-Response::Response(const Request& request, std::filesystem::path resolve_path) :
+namespace fs = std::filesystem;
+
+Response::Response(const Request& request, fs::path resolve_path) :
             protocol("HTTP/1.1"),
             server("Apache/2.2.8 (Ubuntu) mod_ssl/2.2.8 OpenSSL/0.9.8g"),
             connection("close"),
@@ -10,14 +12,14 @@ Response::Response(const Request& request, std::filesystem::path resolve_path) :
             date(get_date()),
             body(nullptr) {
 
-    resolve_path += std::filesystem::path(prepare_url(request.path));
-    std::filesystem::path filepath = resolve_path;
+    resolve_path += fs::path(prepare_url(request.path));
+    fs::path filepath = resolve_path;
 
     if (request.path.find("../") != std::string::npos) {
         status = Response::Status(403);
         return;
     }
-    if (!std::filesystem::exists(filepath)) {
+    if (!fs::exists(filepath)) {
         status = Response::Status(404);
         return;
     }
@@ -25,7 +27,7 @@ Response::Response(const Request& request, std::filesystem::path resolve_path) :
     if (!filepath.has_filename()) {
         filepath.replace_filename("index.html");
     } 
-    if (!std::filesystem::exists(filepath)) {
+    if (!fs::exists(filepath)) {
         status = Response::Status(403);
         return;
     }
@@ -35,8 +37,7 @@ Response::Response(const Request& request, std::filesystem::path resolve_path) :
         return;
     }
     {   
-        std::ifstream file(filepath, std::ios::binary | std::ios::ate);
-        content_length = file.tellg();
+        content_length = fs::file_size(filepath);
     }
 
     status = Response::Status(200);
