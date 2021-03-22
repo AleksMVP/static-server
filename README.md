@@ -16,6 +16,6 @@ make
 ```
 git clone https://github.com/AleksMVP/static-server.git
 cd static-server
-docker build -t bobernginx .
-docker run -p 7888:7888 bobernginx
+docker build -t static-server .
+docker run -p 7888:7888 static-server
 ```

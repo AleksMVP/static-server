@@ -17,4 +17,4 @@ RUN mkdir build && \
 
 WORKDIR /app/build
 
-ENTRYPOINT [ "/app/build/MyProject" ]
+ENTRYPOINT [ "/app/build/static-server" ]
